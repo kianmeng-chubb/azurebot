@@ -47,9 +47,9 @@ var luisAPIKey = process.env.LuisAPIKey;
 var luisAPIHostName = process.env.LuisAPIHostName || 'westus.api.cognitive.microsoft.com';
 
 var qnaMakerHost = process.env.qnaMakerHost;
-var qnaMakerEndpointKey = process.env.qnaMakerEndpointKey,;
-var qnaMakerKbId = process.env.qnaMakerKbId,;
-var qnaMakerSubscriptionKey = process.env.qnaMakerSubscriptionKey,;
+var qnaMakerEndpointKey = process.env.qnaMakerEndpointKey;
+var qnaMakerKbId = process.env.qnaMakerKbId;
+var qnaMakerSubscriptionKey = process.env.qnaMakerSubscriptionKey;
 
 const LuisModelUrl = 'https://' + luisAPIHostName + '/luis/v2.0/apps/' + luisAppId + '?subscription-key=' + luisAPIKey;
 
