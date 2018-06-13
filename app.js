@@ -46,6 +46,11 @@ var luisAppId = process.env.LuisAppId;
 var luisAPIKey = process.env.LuisAPIKey;
 var luisAPIHostName = process.env.LuisAPIHostName || 'westus.api.cognitive.microsoft.com';
 
+var qnaMakerHost = process.env.qnaMakerHost;
+var qnaMakerEndpointKey = process.env.qnaMakerEndpointKey,;
+var qnaMakerKbId = process.env.qnaMakerKbId,;
+var qnaMakerSubscriptionKey = process.env.qnaMakerSubscriptionKey,;
+
 const LuisModelUrl = 'https://' + luisAPIHostName + '/luis/v2.0/apps/' + luisAppId + '?subscription-key=' + luisAPIKey;
 
 // Create a recognizer that gets intents from LUIS, and add it to the bot
@@ -92,8 +97,8 @@ bot.dialog('CreditLimitDialog',
 
 var cog = require('botbuilder-cognitiveservices');
 var qnaRecognizer = new cog.QnAMakerRecognizer({
-    knowledgeBaseId: "a87931b6-3ca3-4ed2-8e95-48fcaa82699a",
-    subscriptionKey: "b32df83536aa44f5b1ebbbeeef5a6e84"
+    knowledgeBaseId: qnaMakerKbId,
+    subscriptionKey: qnaMakerSubscriptionKey
 });
 bot.recognizer(qnarecognizer);
 bot.dialog('AzureVMQuestions', function (session, args) {
