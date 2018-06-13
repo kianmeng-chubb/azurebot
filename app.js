@@ -95,19 +95,19 @@ bot.dialog('CreditLimitDialog',
     matches: 'CreditLimit'
 })
 
-// var cog = require('botbuilder-cognitiveservices');
-// var qnaRecognizer = new cog.QnAMakerRecognizer({
-//     knowledgeBaseId: qnaMakerKbId,
-//     subscriptionKey: qnaMakerSubscriptionKey
-// });
-// bot.recognizer(qnarecognizer);
-// bot.dialog('AzureVMQuestions', function (session, args) {
-//     var query = session.message.text;
-//     cog.QnAMakerRecognizer.recognize(query,
-//         qnaMakerHost + '/knowledgebases/' + qnaMakerKbId + '/generateAnswer',
-//         'EndpointKey ' + qnaMakerEndpointKey, 'Authorization', 1, 'AzureVMQuestions', (error, results) => {
-//             session.send(results.answers[0].answer);
-//         })
-// }).triggerAction({
-//     matches: 'AzureVMQuestions'
-// })
+var cog = require('botbuilder-cognitiveservices');
+var qnaRecognizer = new cog.QnAMakerRecognizer({
+    knowledgeBaseId: qnaMakerKbId,
+    subscriptionKey: qnaMakerSubscriptionKey
+});
+bot.recognizer(qnarecognizer);
+bot.dialog('AzureVMQuestions', function (session, args) {
+    var query = session.message.text;
+    cog.QnAMakerRecognizer.recognize(query,
+        qnaMakerHost + '/knowledgebases/' + qnaMakerKbId + '/generateAnswer',
+        'EndpointKey ' + qnaMakerEndpointKey, 'Authorization', 1, 'AzureVMQuestions', (error, results) => {
+            session.send(results.answers[0].answer);
+        })
+}).triggerAction({
+    matches: 'AzureVMQuestions'
+})
