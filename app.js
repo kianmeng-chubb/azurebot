@@ -81,3 +81,11 @@ bot.dialog('CancelDialog',
     matches: 'Cancel'
 })
 
+bot.dialog('CreditLimitDialog',
+    (session) => {
+        session.send('You credit limit is $5000', session.message.text);
+        session.endDialog();
+    }
+).triggerAction({
+    matches: 'CreditLimit'
+})
