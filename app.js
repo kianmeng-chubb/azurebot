@@ -9,14 +9,14 @@ var botbuilder_azure = require("botbuilder-azure");
 // Setup Restify Server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, function () {
-   console.log('%s listening to %s', server.name, server.url); 
+    console.log('%s listening to %s', server.name, server.url);
 });
-  
+
 // Create chat connector for communicating with the Bot Framework Service
 var connector = new builder.ChatConnector({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword,
-    openIdMetadata: process.env.BotOpenIdMetadata 
+    openIdMetadata: process.env.BotOpenIdMetadata
 });
 
 // Listen for messages from users 
@@ -88,4 +88,21 @@ bot.dialog('CreditLimitDialog',
     }
 ).triggerAction({
     matches: 'CreditLimit'
+})
+
+var cog = require('botbuilder-cognitiveservices');
+var qnaRecognizer = new cog.QnAMakerRecognizer({
+    knowledgeBaseId: "a87931b6-3ca3-4ed2-8e95-48fcaa82699a",
+    subscriptionKey: "b32df83536aa44f5b1ebbbeeef5a6e84"
+});
+bot.recognizer(qnarecognizer);
+bot.dialog('AzureVMQuestions', function (session, args) {
+    var query = session.message.text;
+    cog.QnAMakerRecognizer.recognize(query,
+        qnaMakerHost + '/knowledgebases/' + qnaMakerKbId + '/generateAnswer',
+        'EndpointKey ' + qnaMakerEndpointKey, 'Authorization', 1, 'AzureVMQuestions', (error, results) => {
+            session.send(results.answers[0].answer);
+        })
+}).triggerAction({
+    matches: 'AzureVMQuestions'
 })
