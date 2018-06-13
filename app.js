@@ -28,9 +28,9 @@ server.post('/api/messages', connector.listen());
 * For samples and documentation, see: https://github.com/Microsoft/BotBuilder-Azure
 * ---------------------------------------------------------------------------------------- */
 
-// var tableName = 'botdata';
-// var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.env['AzureWebJobsStorage']);
-// var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azureTableClient);
+var tableName = 'botdata';
+var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.env['AzureWebJobsStorage']);
+var tableStorage = new botbuilder_azure.AzureBotStorage({ gzipData: false }, azureTableClient);
 
 // Create your bot with a function to receive messages from the user
 // This default message handler is invoked if the user's utterance doesn't
@@ -39,7 +39,7 @@ var bot = new builder.UniversalBot(connector, function (session, args) {
     session.send('You reached the default message handler. You said \'%s\'.', session.message.text);
 });
 
-// bot.set('storage', tableStorage);
+bot.set('storage', tableStorage);
 
 // Make sure you add code to validate these fields
 var luisAppId = process.env.LuisAppId;
@@ -52,6 +52,13 @@ var qnaMakerKbId = process.env.qnaMakerKbId;
 var qnaMakerSubscriptionKey = process.env.qnaMakerSubscriptionKey;
 
 const LuisModelUrl = 'https://' + luisAPIHostName + '/luis/v2.0/apps/' + luisAppId + '?subscription-key=' + luisAPIKey;
+
+var cog = require('botbuilder-cognitiveservices');
+var qnaRecognizer = new cog.QnAMakerRecognizer({
+    knowledgeBaseId: qnaMakerKbId,
+    subscriptionKey: qnaMakerSubscriptionKey
+});
+//bot.recognizer(qnaRecognizer);
 
 // Create a recognizer that gets intents from LUIS, and add it to the bot
 var recognizer = new builder.LuisRecognizer(LuisModelUrl);
@@ -95,17 +102,13 @@ bot.dialog('CreditLimitDialog',
     matches: 'CreditLimit'
 })
 
-var cog = require('botbuilder-cognitiveservices');
-var qnaRecognizer = new cog.QnAMakerRecognizer({
-    knowledgeBaseId: qnaMakerKbId,
-    subscriptionKey: qnaMakerSubscriptionKey
-});
-bot.recognizer(qnaRecognizer);
 bot.dialog('AzureVMQuestions', function (session, args) {
     var query = session.message.text;
+    console.log(query);
     cog.QnAMakerRecognizer.recognize(query,
         qnaMakerHost + '/knowledgebases/' + qnaMakerKbId + '/generateAnswer',
         'EndpointKey ' + qnaMakerEndpointKey, 'Authorization', 1, 'AzureVMQuestions', (error, results) => {
+            console.log(results);
             session.send(results.answers[0].answer);
         })
 }).triggerAction({
