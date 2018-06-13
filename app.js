@@ -93,22 +93,31 @@ bot.dialog('CancelDialog',
     matches: 'Cancel'
 })
 
-bot.dialog('CreditLimitDialog',
-    (session) => {
-        session.send('You credit limit is $5000', session.message.text);
-        session.endDialog();
+bot.dialog('CreditLimitDialog', [function (session, args, next) {
+    session.dialogData.profile = args || {}; // Set the profile or create the object. 
+    if (!session.dialogData.profile.accountType) { builder.Prompts.choice(session, "What's your account type?", "silver|gold|platinum", { listStyle: 3 }); } else {
+        next(); // Skip if we already have this info.
     }
-).triggerAction({
-    matches: 'CreditLimit'
-})
+}, function (session, results, next) {
+    if (results.response) {
+        // Save account type if we asked for it. 
+        console.log(results.response); session.dialogData.profile.accountType = results.response.entity;
+    } if (!session.dialogData.profile.location) { builder.Prompts.text(session, "What is your location?"); } else {
+        next(); // Skip if we already have this info.
+    }
+}, function (session, results) {
+    console.log("in next"); if (results.response) { // Save location if we asked for it. 
+        session.dialogData.profile.location = results.response;
+    } //console.log(session.dialogData.profile); 
+    session.send(`Hello credit limit for ${session.dialogData.profile.accountType} and in ${session.dialogData.profile.location} is $10000`);
+}]).triggerAction({ matches: 'CreditLimit' });
+
 
 bot.dialog('AzureVMQuestions', function (session, args) {
     var query = session.message.text;
-    console.log(query);
     cog.QnAMakerRecognizer.recognize(query,
         qnaMakerHost + '/knowledgebases/' + qnaMakerKbId + '/generateAnswer',
         'EndpointKey ' + qnaMakerEndpointKey, 'Authorization', 1, 'AzureVMQuestions', (error, results) => {
-            console.log(results);
             session.send(results.answers[0].answer);
         })
 }).triggerAction({
